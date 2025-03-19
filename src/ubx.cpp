@@ -665,7 +665,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		}
 	}
 
-	int uart2_baudrate = 921600;
+	int uart2_baudrate = 921600;	// Sees.ai - 460800 recommended for 5Hz in docs, so have doubled to allow for 7Hz change made further above.
 
 	if (_mode == UBXMode::RoverWithMovingBase) {
 		UBX_DEBUG("Configuring UART2 for rover");
