@@ -531,16 +531,11 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	cfgValset<uint8_t>(UBX_CFG_KEY_ITFM_ENABLE, 1, cfg_valset_msg_size);
 
 	// measurement rate
-	// In case of F9P not in moving base mode we use 10Hz, otherwise 8Hz (receivers such as M9N can go higher as well, but
-	// the number of used satellites will be restricted to 16. Not mentioned in datasheet)
-	int rate_meas;
-
-	if (_mode != UBXMode::Normal) {
-		rate_meas = 125; //8Hz for heading.
-
-	} else {
-		rate_meas = (_board == Board::u_blox9_F9P) ? 100 : 125;
-	}
+	// F9P L1L2 in firmware <1.50 the max update rate with 4 constellations is 9Hz without RTK and 7Hz with RTK
+	// F9P L1L2 in firmware >=1.50 the max update rate with 4 constellations is 7Hz without RTK and 5Hz with RTK
+	// F9P L1L5 the max update rate with 4 constellations is 8Hz without RTK and 7Hz with RTK
+	// Receivers such as M9N can go higher than 10Hz, but the number of used satellites will be restricted to 16. (Not mentioned in datasheet)
+	int rate_meas = 143; // 7Hz - Sees.ai set to 7Hz instead along with update to UART2 baud rate
 
 	cfgValset<uint16_t>(UBX_CFG_KEY_RATE_MEAS, rate_meas, cfg_valset_msg_size);
 	cfgValset<uint16_t>(UBX_CFG_KEY_RATE_NAV, 1, cfg_valset_msg_size);
@@ -670,7 +665,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		}
 	}
 
-	int uart2_baudrate = 460800;
+	int uart2_baudrate = 921600;	// Sees.ai - 460800 recommended for 5Hz in docs, so have doubled to allow for 7Hz change made further above.
 
 	if (_mode == UBXMode::RoverWithMovingBase) {
 		UBX_DEBUG("Configuring UART2 for rover");
