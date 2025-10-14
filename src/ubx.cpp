@@ -69,7 +69,7 @@
 
 GPSDriverUBX::GPSDriverUBX(Interface gpsInterface, GPSCallbackPtr callback, void *callback_user,
 			   sensor_gps_s *gps_position, satellite_info_s *satellite_info, uint8_t dynamic_model, 
-			   uint8_t min_satellite_signal_level, uint8_t min_elevation, uint8_t dgnss_timeout, float heading_offset, UBXMode mode) :
+			   uint8_t min_satellite_signal_level, int8_t min_elevation, uint8_t dgnss_timeout, float heading_offset, UBXMode mode) :
 	GPSBaseStationSupport(callback, callback_user),
 	_interface(gpsInterface),
 	_gps_position(gps_position),
