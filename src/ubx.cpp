@@ -68,13 +68,15 @@
 #define UBX_DEBUG(...)        {/*GPS_WARN(__VA_ARGS__);*/}
 
 GPSDriverUBX::GPSDriverUBX(Interface gpsInterface, GPSCallbackPtr callback, void *callback_user,
-			   sensor_gps_s *gps_position, satellite_info_s *satellite_info, uint8_t dynamic_model, uint8_t dgnss_timeout,
-			   float heading_offset, UBXMode mode) :
+			   sensor_gps_s *gps_position, satellite_info_s *satellite_info, uint8_t dynamic_model, 
+			   uint8_t min_satellite_signal_level, uint8_t min_elevation, uint8_t dgnss_timeout, float heading_offset, UBXMode mode) :
 	GPSBaseStationSupport(callback, callback_user),
 	_interface(gpsInterface),
 	_gps_position(gps_position),
 	_satellite_info(satellite_info),
 	_dyn_model(dynamic_model),
+	_min_satellite_signal_level(min_satellite_signal_level),
+	_min_elevation(min_elevation),
 	_mode(mode),
 	_heading_offset(heading_offset)
 {
