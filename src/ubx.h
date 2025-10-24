@@ -109,6 +109,7 @@
 #define UBX_ID_CFG_VALDEL     0x8C
 #define UBX_ID_MON_VER        0x04
 #define UBX_ID_MON_HW         0x09 // deprecated in protocol version >= 27 -> use MON_RF
+#define UBX_ID_MON_COMMS      0x36
 #define UBX_ID_MON_RF         0x38
 
 /* UBX ID for RTCM3 output messages */
@@ -159,6 +160,7 @@
 #define UBX_MSG_CFG_VALSET    ((UBX_CLASS_CFG) | UBX_ID_CFG_VALSET << 8)
 #define UBX_MSG_CFG_VALDEL    ((UBX_CLASS_CFG) | UBX_ID_CFG_VALDEL << 8)
 #define UBX_MSG_MON_HW        ((UBX_CLASS_MON) | UBX_ID_MON_HW << 8)
+#define UBX_MSG_MON_COMMS     ((UBX_CLASS_MON) | UBX_ID_MON_COMMS << 8)
 #define UBX_MSG_MON_VER       ((UBX_CLASS_MON) | UBX_ID_MON_VER << 8)
 #define UBX_MSG_MON_RF        ((UBX_CLASS_MON) | UBX_ID_MON_RF << 8)
 #define UBX_MSG_RTCM3_1005    ((UBX_CLASS_RTCM3) | UBX_ID_RTCM3_1005 << 8)
@@ -638,6 +640,33 @@ typedef struct {
 	uint32_t pullL;
 } ubx_payload_rx_mon_hw_ubx7_t;
 
+/* Rx MON-COMMS */
+typedef struct {
+	uint8_t version;
+	uint8_t nPorts;
+	uint8_t txErrors;
+	uint8_t reserved1;
+	uint8_t protIds[4];
+
+	struct ubx_payload_rx_mon_comms_port_t {
+		uint16_t portId;
+		uint16_t txPending;
+		uint32_t txBytes;
+		uint8_t txUsage;
+		uint8_t txPeakUsage;
+		uint16_t rxPending;
+		uint32_t rxBytes;
+		uint8_t rxUsage;
+		uint8_t rxPeakUsage;
+		uint16_t overrunErrs;
+		uint16_t msgs[4];
+		uint8_t reserved2[8];
+		uint32_t skipped;
+	};
+
+	ubx_payload_rx_mon_comms_port_t port[1];
+} ubx_payload_rx_mon_comms_t;
+
 /* Rx MON-RF (replaces MON-HW, protocol 27+) */
 typedef struct {
 	uint8_t version;
@@ -856,6 +885,7 @@ typedef union {
 	ubx_payload_rx_nav_velned_t       payload_rx_nav_velned;
 	ubx_payload_rx_mon_hw_ubx6_t      payload_rx_mon_hw_ubx6;
 	ubx_payload_rx_mon_hw_ubx7_t      payload_rx_mon_hw_ubx7;
+	ubx_payload_rx_mon_comms_t        payload_rx_mon_comms;
 	ubx_payload_rx_mon_rf_t           payload_rx_mon_rf;
 	ubx_payload_rx_mon_ver_part1_t    payload_rx_mon_ver_part1;
 	ubx_payload_rx_mon_ver_part2_t    payload_rx_mon_ver_part2;
