@@ -76,6 +76,7 @@ GPSDriverUBX::GPSDriverUBX(Interface gpsInterface, GPSCallbackPtr callback, void
 	_satellite_info(satellite_info),
 	_dyn_model(dynamic_model),
 	_min_satellite_signal_level(min_satellite_signal_level),
+	_dgnss_timeout(dgnss_timeout),
 	_min_elevation(min_elevation),
 	_mode(mode),
 	_heading_offset(heading_offset)
