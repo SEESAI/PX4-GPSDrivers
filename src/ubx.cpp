@@ -69,14 +69,14 @@
 
 GPSDriverUBX::GPSDriverUBX(Interface gpsInterface, GPSCallbackPtr callback, void *callback_user,
 			   sensor_gps_s *gps_position, satellite_info_s *satellite_info, uint8_t dynamic_model, 
-			   uint8_t min_satellite_signal_level, int8_t min_elevation, uint8_t dgnss_timeout, float heading_offset, UBXMode mode) :
+			   uint8_t dgnss_timeout, uint8_t min_satellite_signal_level, int8_t min_elevation, float heading_offset, UBXMode mode) :
 	GPSBaseStationSupport(callback, callback_user),
 	_interface(gpsInterface),
 	_gps_position(gps_position),
 	_satellite_info(satellite_info),
 	_dyn_model(dynamic_model),
+	_dgnss_timeout(dgnss_timeout),	
 	_min_satellite_signal_level(min_satellite_signal_level),
-	_dgnss_timeout(dgnss_timeout),
 	_min_elevation(min_elevation),
 	_mode(mode),
 	_heading_offset(heading_offset)
@@ -523,16 +523,17 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_UTCSTANDARD, 3 /* USNO (U.S. Naval Observatory derived from GPS) */,
 			   cfg_valset_msg_size);
 	cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_DYNMODEL, _dyn_model, cfg_valset_msg_size);
+
+	if (_dgnss_timeout != 0) {
+		cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_CONSTR_DGNSSTO, _dgnss_timeout, cfg_valset_msg_size);
+	}
+
 	if (_min_satellite_signal_level != 0) {
 		cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_INFIL_MINCNO, _min_satellite_signal_level, cfg_valset_msg_size);
 	}
 
 	if (_min_elevation != 0) {
 		cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_INFIL_MINELEV, _min_elevation, cfg_valset_msg_size);
-	}
-
-	if (_dgnss_timeout != 0) {
-		cfgValset<uint8_t>(UBX_CFG_KEY_NAVSPG_CONSTR_DGNSSTO, _dgnss_timeout, cfg_valset_msg_size);
 	}
 
 	// disable odometer & filtering
