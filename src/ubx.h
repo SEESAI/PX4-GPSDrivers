@@ -111,7 +111,6 @@
 #define UBX_ID_CFG_VALDEL     0x8C
 #define UBX_ID_MON_VER        0x04
 #define UBX_ID_MON_HW         0x09 // deprecated in protocol version >= 27 -> use MON_RF
-#define UBX_ID_MON_COMMS      0x36
 #define UBX_ID_MON_RF         0x38
 
 /* UBX ID for RTCM3 output messages */
@@ -166,7 +165,6 @@
 #define UBX_MSG_CFG_VALSET    ((UBX_CLASS_CFG) | UBX_ID_CFG_VALSET << 8)
 #define UBX_MSG_CFG_VALDEL    ((UBX_CLASS_CFG) | UBX_ID_CFG_VALDEL << 8)
 #define UBX_MSG_MON_HW        ((UBX_CLASS_MON) | UBX_ID_MON_HW << 8)
-#define UBX_MSG_MON_COMMS     ((UBX_CLASS_MON) | UBX_ID_MON_COMMS << 8)
 #define UBX_MSG_MON_VER       ((UBX_CLASS_MON) | UBX_ID_MON_VER << 8)
 #define UBX_MSG_MON_RF        ((UBX_CLASS_MON) | UBX_ID_MON_RF << 8)
 #define UBX_MSG_RTCM3_1005    ((UBX_CLASS_RTCM3) | UBX_ID_RTCM3_1005 << 8)
@@ -684,33 +682,6 @@ typedef struct {
 	uint8_t reserved0[56];
 } ubx_payload_rx_mon_hw_deprecated_t;
 
-/* Rx MON-COMMS */
-typedef struct {
-	uint8_t version;
-	uint8_t nPorts;
-	uint8_t txErrors;
-	uint8_t reserved1;
-	uint8_t protIds[4];
-
-	struct ubx_payload_rx_mon_comms_port_t {
-		uint16_t portId;
-		uint16_t txPending;
-		uint32_t txBytes;
-		uint8_t txUsage;
-		uint8_t txPeakUsage;
-		uint16_t rxPending;
-		uint32_t rxBytes;
-		uint8_t rxUsage;
-		uint8_t rxPeakUsage;
-		uint16_t overrunErrs;
-		uint16_t msgs[4];
-		uint8_t reserved2[8];
-		uint32_t skipped;
-	};
-
-	ubx_payload_rx_mon_comms_port_t port[1];
-} ubx_payload_rx_mon_comms_t;
-
 /* Rx MON-RF (replaces MON-HW, protocol 27+) */
 typedef struct {
 	uint8_t version;
@@ -959,7 +930,6 @@ typedef union {
 	ubx_payload_rx_mon_hw_ubx6_t      payload_rx_mon_hw_ubx6;
 	ubx_payload_rx_mon_hw_ubx7_t      payload_rx_mon_hw_ubx7;
 	ubx_payload_rx_mon_hw_deprecated_t ubx_payload_rx_mon_hw_deprecated;
-	ubx_payload_rx_mon_comms_t        payload_rx_mon_comms;
 	ubx_payload_rx_mon_rf_t           payload_rx_mon_rf;
 	ubx_payload_rx_mon_ver_part1_t    payload_rx_mon_ver_part1;
 	ubx_payload_rx_mon_ver_part2_t    payload_rx_mon_ver_part2;
@@ -1027,9 +997,9 @@ public:
 	GPSDriverUBX(Interface gpsInterface, GPSCallbackPtr callback, void *callback_user,
 		     sensor_gps_s *gps_position, satellite_info_s *satellite_info,
 		     uint8_t dynamic_model = 7,
-		     uint8_t min_satellite_signal_level = 6,
-		     int8_t min_elevation = 10,
-		     uint8_t dgnss_timeout = 60,
+		     uint8_t dgnss_timeout = 0,		     
+		     uint8_t min_satellite_signal_level = 0,
+		     int8_t min_elevation = 0,
 		     float heading_offset = 0.f,
 		     int32_t uart2_baudrate = 57600,
 		     UBXMode mode = UBXMode::Normal);
@@ -1203,10 +1173,10 @@ private:
 	uint8_t _rx_ck_a{0};
 	uint8_t _rx_ck_b{0};
 	uint8_t _dyn_model{7};  ///< ublox Dynamic platform model default 7: airborne with <2g acceleration
-	uint8_t _min_satellite_signal_level{6};  ///< ublox minimum satellite signal level for navigation
-	uint8_t _dgnss_timeout{60};  ///< ublox DNGSS timeout default 60 s.
+	uint8_t _dgnss_timeout{0};  ///< ublox DNGSS timeout	
+	uint8_t _min_satellite_signal_level{0};  ///< ublox minimum satellite signal level for navigation
 
-	int8_t _min_elevation{10};  ///< ublox minimu elevation for a GNSS satellite to be used in navigation
+	int8_t _min_elevation{0};  ///< ublox minimum elevation for a GNSS satellite to be used in navigation
 
 	uint16_t _ack_waiting_msg{0};
 	uint16_t _rx_msg{};
