@@ -187,6 +187,7 @@ public:
 	struct GPSConfig {
 		OutputMode output_mode;
 		GNSSSystemsMask gnss_systems;
+		bool cfg_wipe;
 	};
 
 

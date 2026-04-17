@@ -134,6 +134,21 @@ GPSDriverUBX::configure(unsigned &baudrate, const GPSConfig &config)
 			decodeInit();
 			receive(20);
 			decodeInit();
+			
+			if (config.cfg_wipe) {
+					/* Send a CFG-CFG message to wipe the FLASH and reload a clean config */
+					memset(&_buf.payload_tx_cfg_cfg, 0, sizeof(_buf.payload_tx_cfg_cfg));
+					_buf.payload_tx_cfg_cfg.clearMask = 0xFFFFFFFF;
+					_buf.payload_tx_cfg_cfg.loadMask = 0xFFFFFFFF;
+
+					if (!sendMessage(UBX_MSG_CFG_CFG, (uint8_t *)&_buf, sizeof(_buf.payload_tx_cfg_cfg))) {
+						continue;
+					}
+					
+					if (waitForAck(UBX_MSG_CFG_CFG, 2000, true) < 0) {
+						continue;
+		    		}
+			}
 
 			// try CFG-VALSET: if we get an ACK we know we can use protocol version 27+
 			int cfg_valset_msg_size = initCfgValset();
@@ -251,6 +266,21 @@ GPSDriverUBX::configure(unsigned &baudrate, const GPSConfig &config)
 		}
 
 	} else if (_interface == Interface::SPI) {
+
+		if (config.cfg_wipe) {
+				/* Send a CFG-CFG message to wipe the FLASH and reload a clean config */
+				memset(&_buf.payload_tx_cfg_cfg, 0, sizeof(_buf.payload_tx_cfg_cfg));
+				_buf.payload_tx_cfg_cfg.clearMask = 0xFFFFFFFF;
+				_buf.payload_tx_cfg_cfg.loadMask = 0xFFFFFFFF;
+
+				if (!sendMessage(UBX_MSG_CFG_CFG, (uint8_t *)&_buf, sizeof(_buf.payload_tx_cfg_cfg))) {
+					return -1;
+				}
+
+				if (waitForAck(UBX_MSG_CFG_CFG, 2000, true) < 0) {
+					return -1;
+				}
+		}
 
 		// try CFG-VALSET: if we get an ACK we know we can use protocol version 27+
 		int cfg_valset_msg_size = initCfgValset();
