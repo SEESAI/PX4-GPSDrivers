@@ -166,7 +166,7 @@ GPSDriverUBX::configure(unsigned &baudrate, const GPSConfig &config)
 
 			bool cfg_valset_success = false;
 
-			if (sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+			if (sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 
 				if (waitForAck(UBX_MSG_CFG_VALSET, UBX_CONFIG_TIMEOUT, true) == 0) {
 					cfg_valset_success = true;
@@ -179,7 +179,7 @@ GPSDriverUBX::configure(unsigned &baudrate, const GPSConfig &config)
 				cfg_valset_msg_size = initCfgValset();
 				cfgValset<uint32_t>(UBX_CFG_KEY_CFG_UART1_BAUDRATE, desired_baudrate, cfg_valset_msg_size);
 
-				if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+				if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 					continue;
 				}
 
@@ -262,7 +262,7 @@ GPSDriverUBX::configure(unsigned &baudrate, const GPSConfig &config)
 
 		bool cfg_valset_success = false;
 
-		if (sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 
 			if (waitForAck(UBX_MSG_CFG_VALSET, UBX_CONFIG_TIMEOUT, true) == 0) {
 				cfg_valset_success = true;
@@ -541,7 +541,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	cfgValset<uint16_t>(UBX_CFG_KEY_RATE_NAV, 1, cfg_valset_msg_size);
 	cfgValset<uint8_t>(UBX_CFG_KEY_RATE_TIMEREF, 0, cfg_valset_msg_size);
 
-	if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+	if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 		return -1;
 	}
 
@@ -553,7 +553,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	cfg_valset_msg_size = initCfgValset();
 	cfgValset<uint8_t>(UBX_CFG_KEY_NAVHPG_DGNSSMODE, 3 /* RTK Fixed */, cfg_valset_msg_size);
 
-	if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+	if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 		return -1;
 	}
 
@@ -598,7 +598,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 			cfgValset<uint8_t>(UBX_CFG_KEY_SIGNAL_GLO_ENA, 0, cfg_valset_msg_size);
 		}
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			GPS_ERR("UBX GNSS config send failed");
 			return -1;
 		}
@@ -619,7 +619,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 			cfgValset<uint8_t>(UBX_CFG_KEY_SIGNAL_SBAS_ENA, 0, cfg_valset_msg_size);
 		}
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -635,7 +635,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	cfgValsetPort(UBX_CFG_KEY_MSGOUT_UBX_NAV_SAT_I2C, (_satellite_info != nullptr) ? 10 : 0, cfg_valset_msg_size);
 	cfgValsetPort(UBX_CFG_KEY_MSGOUT_UBX_MON_RF_I2C, 1, cfg_valset_msg_size);
 
-	if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+	if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 		return -1;
 	}
 
@@ -656,7 +656,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 			cfgValset<uint8_t>(UBX_CFG_KEY_CFG_I2COUTPROT_RTCM3X, 0, cfg_valset_msg_size);
 		}
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -685,7 +685,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		cfgValset<uint8_t>(UBX_CFG_KEY_CFG_UART2OUTPROT_RTCM3X, 0, cfg_valset_msg_size);
 		cfgValset<uint32_t>(UBX_CFG_KEY_CFG_UART2_BAUDRATE, uart2_baudrate, cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -715,7 +715,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		cfgValset<uint8_t>(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1124_UART2, 1, cfg_valset_msg_size);
 
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -734,7 +734,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		cfgValset<uint8_t>(UBX_CFG_KEY_CFG_UART1OUTPROT_RTCM3X, 0, cfg_valset_msg_size);
 		cfgValset<uint8_t>(UBX_CFG_KEY_MSGOUT_UBX_NAV_RELPOSNED_UART1, 1, cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -762,7 +762,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 		cfgValset<uint8_t>(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1094_UART1, 1, cfg_valset_msg_size);
 		cfgValset<uint8_t>(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1124_UART1, 1, cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -777,24 +777,27 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 
 int GPSDriverUBX::initCfgValset()
 {
-	memset(&_buf.payload_tx_cfg_valset, 0, sizeof(_buf.payload_tx_cfg_valset));
-	_buf.payload_tx_cfg_valset.layers = UBX_CFG_LAYER_RAM;
-	return sizeof(_buf.payload_tx_cfg_valset) - sizeof(_buf.payload_tx_cfg_valset.cfgData);
+	static_assert(sizeof(_tx_cfg_valset_buf) >= sizeof(ubx_payload_tx_cfg_valset_t),
+		  "_tx_cfg_valset_buf must hold at least the CFG-VALSET header");
+	auto *header = reinterpret_cast<ubx_payload_tx_cfg_valset_t *>(_tx_cfg_valset_buf);
+	memset(_tx_cfg_valset_buf, 0, sizeof(_tx_cfg_valset_buf));
+	header->layers = UBX_CFG_LAYER_RAM;
+	return sizeof(*header) - sizeof(header->cfgData);
 }
 
 template<typename T>
 bool GPSDriverUBX::cfgValset(uint32_t key_id, T value, int &msg_size)
 {
-	if (msg_size + sizeof(key_id) + sizeof(value) > sizeof(_buf)) {
-		// If this happens use several CFG-VALSET messages instead of one
+	if (msg_size + sizeof(key_id) + sizeof(value) > sizeof(_tx_cfg_valset_buf)) {
+		// If this ever fires, either bump UBX_CFG_VALSET_BUF_SIZE or split the
+		// batch into multiple CFG-VALSET messages at the call site.
 		UBX_WARN("buf for CFG_VALSET too small");
 		return false;
 	}
 
-	uint8_t *buffer = (uint8_t *)&_buf.payload_tx_cfg_valset;
-	memcpy(buffer + msg_size, &key_id, sizeof(key_id));
+	memcpy(_tx_cfg_valset_buf + msg_size, &key_id, sizeof(key_id));
 	msg_size += sizeof(key_id);
-	memcpy(buffer + msg_size, &value, sizeof(value));
+	memcpy(_tx_cfg_valset_buf + msg_size, &value, sizeof(value));
 	msg_size += sizeof(value);
 	return true;
 }
@@ -917,7 +920,7 @@ int GPSDriverUBX::restartSurveyIn()
 	cfgValsetPort(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1230_I2C, 0, cfg_valset_msg_size);
 	cfgValsetPort(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1097_I2C, 0, cfg_valset_msg_size);
 	cfgValsetPort(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1127_I2C, 0, cfg_valset_msg_size);
-	sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size);
+	sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size);
 	waitForAck(UBX_MSG_CFG_VALSET, UBX_CONFIG_TIMEOUT, false);
 
 	if (_base_settings.type == BaseSettingsType::survey_in) {
@@ -929,7 +932,7 @@ int GPSDriverUBX::restartSurveyIn()
 		cfgValset<uint32_t>(UBX_CFG_KEY_TMODE_SVIN_ACC_LIMIT, _base_settings.settings.survey_in.acc_limit, cfg_valset_msg_size);
 		cfgValsetPort(UBX_CFG_KEY_MSGOUT_UBX_NAV_SVIN_I2C, 5, cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -956,7 +959,7 @@ int GPSDriverUBX::restartSurveyIn()
 		cfgValset<uint32_t>(UBX_CFG_KEY_TMODE_FIXED_POS_ACC, (uint32_t)(settings.position_accuracy * 10.f),
 				    cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 
@@ -1428,7 +1431,7 @@ GPSDriverUBX::payloadRxInit()
 					// this will overwrite _buf, which is fine, as we'll return -1 and abort further parsing
 					int cfg_valset_msg_size = initCfgValset();
 					cfgValsetPort(key_id, 0, cfg_valset_msg_size);
-					sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size);
+					sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size);
 				}
 			}
 
@@ -2199,7 +2202,7 @@ GPSDriverUBX::activateRTCMOutput(bool reduce_update_rate)
 		cfgValsetPort(UBX_CFG_KEY_MSGOUT_RTCM_3X_TYPE1127_I2C, 1, cfg_valset_msg_size);
 		cfgValsetPort(UBX_CFG_KEY_MSGOUT_UBX_NAV_SVIN_I2C, 0, cfg_valset_msg_size);
 
-		if (!sendMessage(UBX_MSG_CFG_VALSET, (uint8_t *)&_buf, cfg_valset_msg_size)) {
+		if (!sendMessage(UBX_MSG_CFG_VALSET, _tx_cfg_valset_buf, cfg_valset_msg_size)) {
 			return -1;
 		}
 

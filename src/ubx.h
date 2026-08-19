@@ -57,6 +57,11 @@
 #define UBX_CONFIG_TIMEOUT    250 // ms, timeout for waiting ACK
 #define UBX_PACKET_TIMEOUT    8   // ms, if now data during this delay assume that full update received
 
+// Dedicated TX buffer for CFG-VALSET. Sized independently of ubx_buf_t (the RX
+// union) so adding config keys can't push the batch past sizeof(ubx_buf_t),
+// which is bounded by the largest RX payload (NAV-PVT, 92B).
+#define UBX_CFG_VALSET_BUF_SIZE 256
+
 #define DISABLE_MSG_INTERVAL  1000000    // us, try to disable message with this interval
 
 #define FNV1_32_INIT          static_cast<uint32_t>(0x811c9dc5)    // init value for FNV1 hash algorithm
@@ -986,7 +991,7 @@ private:
 	int configureDevicePreV27(const GNSSSystemsMask &gnssSystems);
 
 	/**
-	 * Add a configuration value to _buf and increase the message size msg_size as needed
+	 * Add a configuration value to _tx_cfg_valset_buf and increase the message size msg_size as needed
 	 * @param key_id one of the UBX_CFG_KEY_* constants
 	 * @param value configuration value
 	 * @param msg_size CFG-VALSET message size: this is an input & output param
@@ -1019,7 +1024,7 @@ private:
 	uint32_t fnv1_32_str(uint8_t *str, uint32_t hval);
 
 	/**
-	 * Init _buf as CFG-VALSET
+	 * Init _tx_cfg_valset_buf as CFG-VALSET
 	 * @return size of the message (without any config values)
 	 */
 	int initCfgValset();
@@ -1077,6 +1082,7 @@ private:
 	satellite_info_s       *_satellite_info {nullptr};
 	ubx_ack_state_t         _ack_state{UBX_ACK_IDLE};
 	ubx_buf_t               _buf{};
+	uint8_t                 _tx_cfg_valset_buf[UBX_CFG_VALSET_BUF_SIZE]{};
 	ubx_decode_state_t      _decode_state{};
 	ubx_rxmsg_state_t       _rx_state{UBX_RXMSG_IGNORE};
 
