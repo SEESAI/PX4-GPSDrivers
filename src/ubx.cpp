@@ -535,7 +535,7 @@ int GPSDriverUBX::configureDevice(const GNSSSystemsMask &gnssSystems)
 	// F9P L1L2 in firmware >=1.50 the max update rate with 4 constellations is 7Hz without RTK and 5Hz with RTK
 	// F9P L1L5 the max update rate with 4 constellations is 8Hz without RTK and 7Hz with RTK
 	// Receivers such as M9N can go higher than 10Hz, but the number of used satellites will be restricted to 16. (Not mentioned in datasheet)
-	int rate_meas = 143; // 7Hz - Sees.ai set to 7Hz instead along with update to UART2 baud rate
+	int rate_meas = 200; // 5Hz - Sees.ai set to 5Hz instead along with update to UART2 baud rate
 
 	cfgValset<uint16_t>(UBX_CFG_KEY_RATE_MEAS, rate_meas, cfg_valset_msg_size);
 	cfgValset<uint16_t>(UBX_CFG_KEY_RATE_NAV, 1, cfg_valset_msg_size);
